@@ -1,0 +1,64 @@
+---
+title: "Pedogenesis_Data_Project"
+author: "Phoebe Teskey"
+date: "2026-04-30"
+output: html_document
+---
+
+Soil Data Project
+The attached spreadsheets contain 1) summary of the PDI and WM PDI values for the McAuliffe 1994 paper and the SRER soil chronosequence, and 2) compiled long-term vegetation transect from the SRER that includes data for mean annual precipitation (MAP) and surficial geologic map unit (MapUnit) that corresponds with estimated landscape age. This assignment will consist of several components.
+Component 1 - McAuliffe Paper
+1)	How do the calculated PDI and WM PDI values relate to vegetation abundance, diversity, structural form across the three fan complexes detailed in the paper? Were your hypotheses from the McAuliffe reading assignment confirmed?
+
+PDI values can be used as a proxy for determining and understanding vegetation composition. A higher PDI value indicates older, more developed soils, which tend to have higher clay content and less water penetration, selecting for shallow rooted plants such as grasses. Intermediate PDI values are moderately developed, with some clay accumulation and some deeper water infiltration possible. We see a high plant diversity here, as this soil can support both shallow rooted and some deep-rooted plants. Woody shrubs, perennial grass and mesquite are common. The lower PDI values indicate the least developed soils, with low clay content and deep, rapid water infiltration. This selects for deeply rooted plants such as mesquite and some shrubs.
+However, McAuliffe finds that “Vegetation patterns are not continuous along a gradient and instead show strong spatial heterogeneity tied to geomorphic surfaces”. He found that soil age does not necessarily inform PDI values. The paper exemplifies this. The Tucson Mountains sites exhibit both high and low PDI value sites, with low PDI sites having more woody species and high PDI sites having more grass and shrubs together. This loosely follows the general metric I described in the first paragraph.
+
+The Silverbell Mountains sites follow the vegetation/PDI metric most closely, with woody species on young soils (low PDI) and mixed grass/shrubs on middle-aged surfaces.
+
+The Tortolitas are the least consistent. Some of the sites are very old, but can support trees and shrubs, likely due to the high erosion at the site, lending younger soil characteristics.
+
+My hypotheses are here: 
+1.	As clay and carbonates increase, so does shrub dominance. 
+2.	Plant diversity will peak at mid-aged soils with both grasses and shrubs.
+3.	Higher clay accumulations will select for shrubs because thicker, more sturdy roots are required to penetrate clays and argillic horizons.
+
+The first hypothesis is blatantly incorrect. Clay accumulation is generally associated more with perennial grasses, not shrubs.
+
+The second hypothesis follows the general PDI/vegetation metric seen in the Tucson Mtns and Silverbells, but the Tortolitas provide an exception to these general rules. As McAuliffe found, soil age is not always a strong predictor of PDI values.
+
+The third hypothesis is also false and is an iteration of the first. I don’t know what I was thinking.
+
+2)	How does erosion impact PDI and WM PDI on the different surfaces and what key soil features differ between the two surfaces that causes the change in profile development?
+
+Erosion lends a lower PDI value to sites regardless of soil age. A site with higher erosion has faster and deeper water infiltration, selecting for plants that can access deeper water, like mesquite. This makes sense in the Tortolitas, particularly because many of the surfaces there are granitic, decomposing bedrock. The particle size is going to be larger, clay content is lower, and in some ways, soil formation has been reset. 
+
+Component 2 - SRER Chronosequence
+1)	Plot both PDI and WM PDI versus estimated soil age - using both the actual values and as a semi-log plot with soil age on a log scale. Provide detail on how both change relative to soil age as well as proposed explanations for the observed patterns. 
+
+```{r}
+library(tidyverse)
+SRER <- read.csv("../data/SRER2.csv")
+
+SRER1 <- mutate(SRER, age_log = log(Age))
+
+ggplot(SRER1, aes(x = age_log))+
+  geom_line(aes(y = PDI), linewidth = 1) +
+  theme_light() +
+  labs(title = "PDI Values by Soil Age at the SRER", x = "Soil Age (log scale)", y = "PDI Value")
+```
+
+
+```{r}
+ggplot(SRER1, aes(x = age_log))+
+  geom_line(aes(y = WM_PDI), linewidth = 1) +
+  theme_light() +
+  labs(title = "WM_PDI Values by Soil Age at the SRER", x = "Soil Age (log scale)", y = "WM_PDI Value")
+```
+
+```{r}
+McAuliffe <- read.csv("../data/McAuliffe.csv")
+```
+
+
+Both graphs show a distinct peak around soil age of 650,000 years, about 6 on the log scale. Since PDI is a proxy for soil development, we can infer that these soils are showing signs of continuing development up until 650k years, before beginning to break down again and returning to a more “undeveloped” state despite their advanced age. Looking at the PDI index, signs of development include horizon formation, color, texture, structure, consistence, presence of clay films, and carbonate development. A soil that has aged has likely been leached of most minerals, horizons are unclear, and erosion might be occurring.
+
