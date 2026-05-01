@@ -109,15 +109,17 @@ McAuliffe <- read.csv("../data/McAuliffe.csv")
 
 McAuliffe1 <- mutate(McAuliffe, age_log = log(Age))
 
-ggplot(McAuliffe1, aes(x = age_log))+
-  geom_point(aes(y = PDI)) +
+ggplot(McAuliffe1, aes(x = age_log, y = PDI))+
+  geom_point() +
+  geom_smooth(method = "lm") +
   theme_light() +
   labs(title = "PDI Values by Soil Age; McAuliffe Profiles", x = "Soil Age (log scale)", y = "PDI Value")
 ```
 
 ```{r}
-ggplot(McAuliffe1, aes(x = age_log))+
-  geom_point(aes(y = WM_PDI)) +
+ggplot(McAuliffe1, aes(x = age_log, y = WM_PDI))+
+  geom_point() +
+  geom_smooth(method = "lm") +
   theme_light() +
   labs(title = "WM_PDI Values by Soil Age; McAuliffe Profiles", x = "Soil Age (log scale)", y = "WM_PDI Value")
 ```
@@ -452,7 +454,7 @@ tab_model(mlr_total, mlr_npg, mlr_ipg, mlr_fx)
 
 ```
 
-Results: Mean annual precipitation (MAP) is the dominant driver for all
+Results: Mean annual precipitation (MAP) is the dominant driver for
 biomass (p \< 0.05) across all vegetation types. No significance was
 found in interactions between soil age and MAP (p \> 0.05) in all
 models. The model explained 45% of variance in invasive grass biomass
@@ -480,3 +482,29 @@ ggplot(long_SRER, aes(x = map_mm_yr, y = Value)) +
 ```
 
 Discussion:
+
+Here we have 2 datasets, a set from the Santa Rita Experimental Range
+(SRER), and another set from the Tucson Mountains, Tortolitas, and the
+Silverbell mountains. Both show general trends of PDI value increasing
+with soil age, but with high variation in eroded sites (McAuliffe,
+1994). While PDI values are generally seen as a proxy for soil age,
+several soil profiles here are exceptions to this rule, so PDI alone
+cannot be used as an accurate predictor of soil age. Another general
+trend of soil age is vegetation type. As soils age, certain vegetation
+can no longer persist there. We can see this in these soil profiles, as
+native and invasive grass have an inverse relationship to PDI, with
+invasive grass generally increasing with PDI value, and native grass
+decreasing. This raises an interesting question, why can invasive grass
+persist on older soil surfaces? Old soils are generally leached of
+available minerals, and yet Lehmann's lovegrass is prevalent. Mean
+annual precipitation (MAP) adds another piece to the puzzle, and is our
+strongest predictor of grass biomass. Interestingly, native grass
+respond less aggressively to higher MAP, perhaps indicating that they
+are less dependent on moisture or more drought tolerant than invasive
+grasses. The lack of significant interaction between MAP and soil age
+suggests that these two variables act independently on biomass, and that
+precipitation effect is stable across all vegetation types.
+
+McAuliffe, J. (1994). Landscape Evolution, Soil Formation, and
+Ecological Patterns and Processes in Sonoran Desert Bajadas. *Ecological
+Monographs, 64*(2): 111-148.
