@@ -5,9 +5,11 @@ date: "2026-04-30"
 output: html_document
 ---
 
-Soil Data Project
+*Soil Data Project*
 The attached spreadsheets contain 1) summary of the PDI and WM PDI values for the McAuliffe 1994 paper and the SRER soil chronosequence, and 2) compiled long-term vegetation transect from the SRER that includes data for mean annual precipitation (MAP) and surficial geologic map unit (MapUnit) that corresponds with estimated landscape age. This assignment will consist of several components.
-Component 1 - McAuliffe Paper
+
+*Component 1 - McAuliffe Paper*
+
 1)	How do the calculated PDI and WM PDI values relate to vegetation abundance, diversity, structural form across the three fan complexes detailed in the paper? Were your hypotheses from the McAuliffe reading assignment confirmed?
 
 PDI values can be used as a proxy for determining and understanding vegetation composition. A higher PDI value indicates older, more developed soils, which tend to have higher clay content and less water penetration, selecting for shallow rooted plants such as grasses. Intermediate PDI values are moderately developed, with some clay accumulation and some deeper water infiltration possible. We see a high plant diversity here, as this soil can support both shallow rooted and some deep-rooted plants. Woody shrubs, perennial grass and mesquite are common. The lower PDI values indicate the least developed soils, with low clay content and deep, rapid water infiltration. This selects for deeply rooted plants such as mesquite and some shrubs.
@@ -30,9 +32,10 @@ The third hypothesis is also false and is an iteration of the first. I don’t k
 
 2)	How does erosion impact PDI and WM PDI on the different surfaces and what key soil features differ between the two surfaces that causes the change in profile development?
 
-Erosion lends a lower PDI value to sites regardless of soil age. A site with higher erosion has faster and deeper water infiltration, selecting for plants that can access deeper water, like mesquite. This makes sense in the Tortolitas, particularly because many of the surfaces there are granitic, decomposing bedrock. The particle size is going to be larger, clay content is lower, and in some ways, soil formation has been reset. 
+Erosion lends a lower PDI value to sites regardless of soil age. A site with higher erosion has faster and deeper water infiltration, selecting for plants that can access deeper water, like mesquite. This makes sense in the Tortolitas, particularly because many of the surfaces there are granitic, decomposing bedrock. The particle size is going to be larger, clay content is lower, and in many ways, soil formation has been reset. 
 
-Component 2 - SRER Chronosequence
+*Component 2 - SRER Chronosequence*
+
 1)	Plot both PDI and WM PDI versus estimated soil age - using both the actual values and as a semi-log plot with soil age on a log scale. Provide detail on how both change relative to soil age as well as proposed explanations for the observed patterns. 
 
 ```{r}
@@ -57,8 +60,225 @@ ggplot(SRER1, aes(x = age_log))+
 
 ```{r}
 McAuliffe <- read.csv("../data/McAuliffe.csv")
+
+McAuliffe1 <- mutate(McAuliffe, age_log = log(Age))
+
+ggplot(McAuliffe1, aes(x = age_log))+
+  geom_point(aes(y = PDI)) +
+  theme_light() +
+  labs(title = "PDI Values by Soil Age; McAuliffe Profiles", x = "Soil Age (log scale)", y = "PDI Value")
 ```
 
 
-Both graphs show a distinct peak around soil age of 650,000 years, about 6 on the log scale. Since PDI is a proxy for soil development, we can infer that these soils are showing signs of continuing development up until 650k years, before beginning to break down again and returning to a more “undeveloped” state despite their advanced age. Looking at the PDI index, signs of development include horizon formation, color, texture, structure, consistence, presence of clay films, and carbonate development. A soil that has aged has likely been leached of most minerals, horizons are unclear, and erosion might be occurring.
+```{r}
+ggplot(McAuliffe1, aes(x = age_log))+
+  geom_point(aes(y = WM_PDI)) +
+  theme_light() +
+  labs(title = "WM_PDI Values by Soil Age; McAuliffe Profiles", x = "Soil Age (log scale)", y = "WM_PDI Value")
+```
+
+
+Both graphs of the SRER data show a distinct peak around soil age of 650,000 years, about 6 on the log scale. Since PDI is a proxy for soil development, we can infer that these soils are showing signs of continuing development up until 650k years, before beginning to break down again and returning to a more “undeveloped” state despite their advanced age. 
+
+The McAuliffe graphs show minimal or no relationship between soil age and PDI value. Several soils of the same age had highly different PDI values.
+
+Looking at the PDI index, signs of development include horizon formation, color, texture, structure, consistence, presence of clay films, and carbonate development. A soil that is very old has likely been leached of most minerals, horizons are unclear, and erosion might be occurring. However, erosion can occur for a variety of reasons, not just soil age, as is likely evidenced in the McAuliffe profiles.
+
+2)	Considering changes in PDI/WM PDI observed with erosion in the McAuliffe papers, do you think erosion plays any role in the observed patterns with age? Propose explanations for why SRER does or does not vary from the data from McAuliffe.
+
+Yes, the PDI value for the Mid-Late Pleistocene site is 19.05, whereas the eroded profile of the same age is 14.74. This is more apparent with the Mid-Late Pleistocene lower site, with a PDI of 18.44; the eroded profile is 2.85. Erosion seems to “turn back time” and revert a soil back to an undeveloped state. I would guess that the SRER profiles were not in areas that high erosion potential, and thus we could see a clear relationship of soil age and PDI value.
+
+*Component 3 - SRER Vegetation Transects*
+
+These data were compiled for a series of long-term vegetation transects monitored across the SRER. The transects are measured every 3 years and span the entire elevation and soil age range across SRER. The data in the spreadsheet represent the averages of all these data providing an estimate of the annual aboveground native and invasive grass biomass (g/m2), the total biomass (sum of native and invasive), the fraction of the total biomass that is invasive, the average mean annual precipitation (MAP, cm/yr), the surficial geologic mapunit (Qy, Qi3, etc.), as well as ancillary data on pasture, burn history, grazing history, UTM coordinates, and elevation (m). I subset the data to only those sites that have not burned in recent history and are actively grazed by cattle. **Please note - I also included columns for MAP, Total, Native and Invasive Biomass as Box-Cox transformed data (Name of property followed by -X). This transformation helps approximate a normal distribution for statistical analysis. 
+
+1)Data coupling:
+Update the vegetation dataset with the PDI and WM PDI values from the spreadsheet with SRER and McAuliffe data. Assume all the Qy mapunits are equivalent to "Qy1" from the chronosequence data. 
+
+```{r}
+Total_SRER <- read.csv("../data/SRER_compiled.csv")
+
+Total_SRER1 <- Total_SRER %>% 
+  mutate(MapUnit_12 = replace(MapUnit_12, MapUnit_12 == "Qy", "Qy1"))
+
+Total_SRER2 <- full_join(Total_SRER1, SRER1, join_by(MapUnit_12 == Site))
+
+```
+
+2) Data analyses:
+
+i) Create box plots of total, native, invasive biomass, and fraction invasive by Map Unit;
+
+```{r}
+rename_SRER <- Total_SRER2 %>% 
+  rename(pasture = PASTURE, burn_status = BURN.STATUS, grazing_status = Grazing.Status, map_unit = MapUnit_12,
+         utm_x = UTM_X, utn_y = UTM_Y, elevation_m = Elevation..m., map_mm_yr = Predicted.MAP..mm.yr.,
+         avg_npg_biomass = Average.NPG.Biomass..g.m..., sd_npg_biomass = Std.Dev.NPG.Biomass,
+         avg_ipg_biomass = Average.IPG.Biomass..g.m..., sd_ipg_biomass = Std.Dev.IPG.Biomass,
+         totalgrass_biomass = Total.Grass.Biomass..g.m..., fraction_invasive_biomass = Fraction.Invasive.Biomass,
+         boxcox_Map_mm_yr = Predicted.MAP..mm.yr..X, boxcox_avg_npg_biomass = Average.NPG.Biomass..g.m....X,
+         boxcox_avg_ipg_biomass = Average.IPG.Biomass..g.m....X, boxcox_totalgrass_biomass = Total.Grass.Biomass..g.m....X) %>% 
+  filter(!map_unit %in% c("Qi4", "Qy2"))
+
+ggplot(rename_SRER, aes(x = map_unit, y = totalgrass_biomass)) +
+  geom_boxplot() +
+  geom_jitter(alpha = 0.5, width = 0.1) +
+  labs(x = "Map Unit", y = "Total Biomass (g) of Invasive and Native Grass")
+```
+
+
+```{r}
+ggplot(rename_SRER, aes(x = map_unit, y = avg_npg_biomass)) +
+  geom_boxplot() +
+  geom_jitter(alpha = 0.5, width = 0.1) +
+  labs(x = "Map Unit", y = "Total Biomass (g) of Native Grass")
+```
+
+
+```{r}
+ggplot(rename_SRER, aes(x = map_unit, y = avg_ipg_biomass)) +
+  geom_boxplot() +
+  geom_jitter(alpha = 0.5, width = 0.1) +
+  labs(x = "Map Unit", y = "Total Biomass (g) of Invasive Grass")
+```
+
+
+```{r}
+ggplot(rename_SRER, aes(x = map_unit, y = fraction_invasive_biomass)) +
+  geom_boxplot() +
+  geom_jitter(alpha = 0.5, width = 0.1) +
+  labs(x = "Map Unit", y = "Fraction of Total Biomass (g) that is Invasive Grass")
+```
+
+
+ii) Plot total, native and invasive biomass, and fraction invasive by mean annual precipitation;
+
+
+```{r}
+ggplot(rename_SRER, aes(x = map_mm_yr, y = totalgrass_biomass)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  labs(x = "Average Annual Precipitation (mm)", y = "Total Biomass (g) of Invasive and Native Grass")
+```
+
+
+```{r}
+ggplot(rename_SRER, aes(x = map_mm_yr, y = avg_npg_biomass)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  labs(x = "Average Annual Precipitation (mm)", y = "Total Biomass (g) of Native Grass")
+```
+
+
+```{r}
+ggplot(rename_SRER, aes(x = map_mm_yr, y = avg_ipg_biomass)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  labs(x = "Average Annual Precipitation (mm)", y = "Total Biomass (g) of Invasive Grass")
+```
+
+
+```{r}
+ggplot(rename_SRER, aes(x = map_mm_yr, y = fraction_invasive_biomass)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  labs(x = "Average Annual Precipitation (mm)", y = "Fraction of Total Biomass (g) that is Invasive Grass")
+```
+
+
+iii) Plot total, native and invasive biomass, and fraction invasive by PDI and WM PDI.
+
+
+```{r}
+ggplot(rename_SRER, aes(x = PDI, y = totalgrass_biomass)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  labs(x = "PDI Value", y = "Total Biomass (g) of Invasive and Native Grass")
+```
+
+
+```{r}
+ggplot(rename_SRER, aes(x = PDI, y = avg_npg_biomass)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  labs(x = "PDI Value", y = "Total Biomass (g) of Native Grass")
+```
+
+
+```{r}
+ggplot(rename_SRER, aes(x = PDI, y = avg_ipg_biomass)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  labs(x = "PDI Value", y = "Total Biomass (g) of Invasive Grass")
+```
+
+
+```{r}
+ggplot(rename_SRER, aes(x = PDI, y = fraction_invasive_biomass)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  labs(x = "PDI Value", y = "Fraction of Total Biomass (g) that is Invasive Grass")
+```
+
+
+```{r}
+ggplot(rename_SRER, aes(x = WM_PDI, y = totalgrass_biomass)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  labs(x = "WM_PDI Value", y = "Total Biomass (g) of Invasive and Native Grass")
+```
+
+
+```{r}
+ggplot(rename_SRER, aes(x = WM_PDI, y = avg_npg_biomass)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  labs(x = "WM_PDI Value", y = "Total Biomass (g) of Native Grass")
+```
+
+
+```{r}
+ggplot(rename_SRER, aes(x = WM_PDI, y = avg_ipg_biomass)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  labs(x = "WM_PDI Value", y = "Total Biomass (g) of Invasive Grass")
+```
+
+
+```{r}
+ggplot(rename_SRER, aes(x = WM_PDI, y = fraction_invasive_biomass)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  labs(x = "WM_PDI Value", y = "Fraction of Total Biomass (g) that is Invasive Grass")
+```
+
+
+3) Statistical analyses:
+
+i) Fit least square means linear regressions using MAP as the independent variable, and total, native and invasive biomass, and fraction invasive as dependent variables - ***use the Box-Cox transformed variables!
+Box-cox have a X on the end of the column name
+
+
+```{r}
+
+```
+
+
+
+ii) Fit least square means linear regressions using estimated age, PDI, and WM-PDI as the independent variable, and total, native and invasive biomass, and fraction invasive as dependent variables - ***use the Box-Cox transformed biomass data!
+
+
+```{r}
+
+```
+
+
+iii) Multiple linear regression - include MAP and the age variable with the best correlation (estimated age, PDI or WM-PDI) and their interaction term (MAP x Age) as the independent variables and total, native and invasive biomass, and fraction invasive as dependent variables - ***use the Box-Cox transformed variables!
+
+
+```{r}
+
+```
+
+
 
