@@ -205,6 +205,9 @@ rename_SRER <- Total_SRER2 %>%
          boxcox_avg_ipg_biomass = Average.IPG.Biomass..g.m....X, boxcox_totalgrass_biomass = Total.Grass.Biomass..g.m....X) %>% 
   filter(!map_unit %in% c("Qi4", "Qy2"))
 
+mapunit_order <- c("Qy1", "Qi3", "Qi2", "Qi1", "Qo")
+rename_SRER$map_unit <- factor(rename_SRER$map_unit, levels = mapunit_order)
+
 ggplot(rename_SRER, aes(x = map_unit, y = totalgrass_biomass)) +
   geom_boxplot() +
   geom_jitter(alpha = 0.5, width = 0.1) +
@@ -232,36 +235,47 @@ ggplot(rename_SRER, aes(x = map_unit, y = fraction_invasive_biomass)) +
   labs(x = "Map Unit", y = "Fraction of Total Biomass (g) that is Invasive Grass")
 ```
 
+Here we can see several trends that emerge. The x-axis is map unit and
+is arranged by soil age from youngest soils to oldest soils. Total
+biomass, invasive biomass, and fraction of invasive biomass are all
+positive trends with soil age. Native biomass has a negative trend,
+indicating that native grass cannot persist on older soils.
+
 ii) Plot total, native and invasive biomass, and fraction invasive by
     mean annual precipitation;
 
 ```{r}
 ggplot(rename_SRER, aes(x = map_mm_yr, y = totalgrass_biomass)) +
   geom_point() +
-  geom_smooth(method = "lm", se = F) +
+  geom_smooth(method = "lm") +
   labs(x = "Average Annual Precipitation (mm)", y = "Total Biomass (g) of Invasive and Native Grass")
 ```
 
 ```{r}
 ggplot(rename_SRER, aes(x = map_mm_yr, y = avg_npg_biomass)) +
   geom_point() +
-  geom_smooth(method = "lm", se = F) +
+  geom_smooth(method = "lm") +
   labs(x = "Average Annual Precipitation (mm)", y = "Total Biomass (g) of Native Grass")
 ```
 
 ```{r}
 ggplot(rename_SRER, aes(x = map_mm_yr, y = avg_ipg_biomass)) +
   geom_point() +
-  geom_smooth(method = "lm", se = F) +
+  geom_smooth(method = "lm") +
   labs(x = "Average Annual Precipitation (mm)", y = "Total Biomass (g) of Invasive Grass")
 ```
 
 ```{r}
 ggplot(rename_SRER, aes(x = map_mm_yr, y = fraction_invasive_biomass)) +
   geom_point() +
-  geom_smooth(method = "lm", se = F) +
+  geom_smooth(method = "lm") +
   labs(x = "Average Annual Precipitation (mm)", y = "Fraction of Total Biomass (g) that is Invasive Grass")
 ```
+
+Annual average precipitation has a positive relationship with all
+variables. Native grass biomass does not increase nearly as much as
+invasive grass biomass, indicating that native grasses do not respond as
+aggressively to higher annual average precipitation.
 
 iii) Plot total, native and invasive biomass, and fraction invasive by
      PDI and WM PDI.
