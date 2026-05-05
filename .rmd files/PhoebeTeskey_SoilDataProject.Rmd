@@ -404,6 +404,16 @@ summary(fx_age_model)
 tab_model(totalgrass_age_model, npg_age_model, ipg_age_model, fx_age_model)
 ```
 
+Here we can see that soil age is a significant driver of biomass for all
+variables (p \< 0.05). Much like the previous analysis, the strength of
+this relationship varies between native and invasive biomass. Fraction
+(Adjusted R\^2 = 0.218) and invasive (adjusted R\^2 = 0.114) biomass are
+strongly correlated with soil age (p\<0.001). In contrast, native
+biomass is, again, less responsive, as soil age explains only 6.1% of
+variance (adjusted R\^2=0.061). Total biomass is a bit less significant
+(p value \< 0.05) with the lowest adjusted R\^2=0.048 of the variables.
+In general these R\^2 values are trending lower than the first analysis.
+
 ```{r}
 totalgrass_PDI_model <- lm(boxcox_totalgrass_biomass ~ PDI, data = rename_SRER)
 
@@ -418,7 +428,15 @@ summary(npg_PDI_model)
 summary(ipg_PDI_model)
 summary(fx_PDI_model)
 
+tab_model(totalgrass_PDI_model, npg_PDI_model, ipg_PDI_model, fx_PDI_model)
+
 ```
+
+The results here show weaker relationships across all variables, as
+adjusted R\^2 values remain consistently low (Adjusted R\^2 \< 0.182).
+The analysis does show significance across native, invasive and fraction
+invasive biomass (p value \< 0.01). Total biomass does not show a
+significant relationship (p value \< 0.08, adjusted R\^2=0.021).
 
 ```{r}
 totalgrass_WMPDI_model <- lm(boxcox_totalgrass_biomass ~ WM_PDI, data = rename_SRER)
@@ -433,7 +451,15 @@ summary(totalgrass_WMPDI_model)
 summary(npg_WMPDI_model)
 summary(ipg_WMPDI_model)
 summary(fx_WMPDI_model)
+
+tab_model(totalgrass_WMPDI_model, npg_WMPDI_model, ipg_WMPDI_model, fx_WMPDI_model)
 ```
+
+The results here show even weaker relationships across all variables
+than the PDI analysis. Adjusted R\^2 values remain consistently low
+(Adjusted R\^2 \< 0.107). The analysis shows significance across
+invasive and fraction invasive biomass (p value \< 0.01). Total and
+native biomass do not show a significant relationship.
 
 iii) Multiple linear regression - include MAP and the age variable with
      the best correlation (estimated age, PDI or WM-PDI) and their
@@ -456,15 +482,17 @@ iii) Multiple linear regression - include MAP and the age variable with
 | WM x ipg           | .05                 |
 | WM x fraction      | .10                 |
 
-The variable log_age has the most consistently high adjusted R\^2
-values, so that is what I will use for the multiple linear regression
-models.
+The variable log_age has the most consistently high adjusted R\^2 values
+across every variable but native biomass. PDI is the best fit for native
+biomass. I will use log_age for total, invasive and fraction biomass in
+the multiple linear regression models; I will use PDI for native
+biomass.
 
 ```{r}
 mlr_total <- lm(boxcox_totalgrass_biomass ~ map_mm_yr * age_log, 
                 data = rename_SRER)
 
-mlr_npg <- lm(boxcox_avg_npg_biomass ~ map_mm_yr * age_log, data = rename_SRER)
+mlr_npg <- lm(boxcox_avg_npg_biomass ~ map_mm_yr * PDI, data = rename_SRER)
 
 mlr_ipg <- lm(boxcox_avg_ipg_biomass ~ map_mm_yr * age_log, data = rename_SRER)
 
@@ -474,6 +502,7 @@ summary(mlr_total)
 summary(mlr_npg)
 summary(mlr_ipg)
 summary(mlr_fx)
+
 ```
 
 **4) Summary and Conclusions**
@@ -485,17 +514,18 @@ comparison from the published literature.
 
 ```{r}
 
-#creates a table of model summaries
 tab_model(mlr_total, mlr_npg, mlr_ipg, mlr_fx)
 
 ```
 
-Results: Mean annual precipitation (MAP) is the dominant driver for
-biomass (p \< 0.05) across all vegetation types. No significance was
-found in interactions between soil age and MAP (p \> 0.05) in all
-models. The model explained 45% of variance in invasive grass biomass
-(adjusted R\^2 = 0.448) and only 16% in native grass (adjusted R\^2 =
-0.161).
+Results:
+
+Total, invasive and fraction biomass are strongly predicted by MAP (p
+value \< 0.005). No significant interaction was found between MAP and
+soil age for these two variables.
+
+Native biomass showed a significant interaction between MAP and PDI (p
+value \< 0.05), the only variable to do so (adjusted R\^2 = 0.175).
 
 ```{r}
 long_SRER <- rename_SRER %>%
@@ -537,9 +567,12 @@ annual precipitation (MAP) adds another piece to the puzzle, and is our
 strongest predictor of grass biomass. Interestingly, native grass
 respond less aggressively to higher MAP, perhaps indicating that they
 are less dependent on moisture or more drought tolerant than invasive
-grasses. The lack of significant interaction between MAP and soil age
-suggests that these two variables act independently on biomass, and that
-precipitation effect is stable across all vegetation types.
+grasses. The significant interaction between PDI and MAP for native
+grass suggests that both of these variables will be important when
+making management plans to improve native grass populations. The lack of
+significant interaction between MAP and soil age suggests that these two
+variables act independently on invasive biomass, and that precipitation
+effect is stable..
 
 McAuliffe, J. (1994). Landscape Evolution, Soil Formation, and
 Ecological Patterns and Processes in Sonoran Desert Bajadas. *Ecological
