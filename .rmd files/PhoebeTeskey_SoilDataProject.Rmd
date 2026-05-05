@@ -283,58 +283,67 @@ iii) Plot total, native and invasive biomass, and fraction invasive by
 ```{r}
 ggplot(rename_SRER, aes(x = PDI, y = totalgrass_biomass)) +
   geom_point() +
-  geom_smooth(method = "lm", se = F) +
+  geom_smooth(method = "lm") +
   labs(x = "PDI Value", y = "Total Biomass (g) of Invasive and Native Grass")
 ```
 
 ```{r}
 ggplot(rename_SRER, aes(x = PDI, y = avg_npg_biomass)) +
   geom_point() +
-  geom_smooth(method = "lm", se = F) +
+  geom_smooth(method = "lm") +
   labs(x = "PDI Value", y = "Total Biomass (g) of Native Grass")
 ```
 
 ```{r}
 ggplot(rename_SRER, aes(x = PDI, y = avg_ipg_biomass)) +
   geom_point() +
-  geom_smooth(method = "lm", se = F) +
+  geom_smooth(method = "lm") +
   labs(x = "PDI Value", y = "Total Biomass (g) of Invasive Grass")
 ```
 
 ```{r}
 ggplot(rename_SRER, aes(x = PDI, y = fraction_invasive_biomass)) +
   geom_point() +
-  geom_smooth(method = "lm", se = F) +
+  geom_smooth(method = "lm") +
   labs(x = "PDI Value", y = "Fraction of Total Biomass (g) that is Invasive Grass")
 ```
 
 ```{r}
 ggplot(rename_SRER, aes(x = WM_PDI, y = totalgrass_biomass)) +
   geom_point() +
-  geom_smooth(method = "lm", se = F) +
+  geom_smooth(method = "lm") +
   labs(x = "WM_PDI Value", y = "Total Biomass (g) of Invasive and Native Grass")
 ```
 
 ```{r}
 ggplot(rename_SRER, aes(x = WM_PDI, y = avg_npg_biomass)) +
   geom_point() +
-  geom_smooth(method = "lm", se = F) +
+  geom_smooth(method = "lm") +
   labs(x = "WM_PDI Value", y = "Total Biomass (g) of Native Grass")
 ```
 
 ```{r}
 ggplot(rename_SRER, aes(x = WM_PDI, y = avg_ipg_biomass)) +
   geom_point() +
-  geom_smooth(method = "lm", se = F) +
+  geom_smooth(method = "lm") +
   labs(x = "WM_PDI Value", y = "Total Biomass (g) of Invasive Grass")
 ```
 
 ```{r}
 ggplot(rename_SRER, aes(x = WM_PDI, y = fraction_invasive_biomass)) +
   geom_point() +
-  geom_smooth(method = "lm", se = F) +
+  geom_smooth(method = "lm") +
   labs(x = "WM_PDI Value", y = "Fraction of Total Biomass (g) that is Invasive Grass")
 ```
+
+Much like the first set of graphs produced in this document of map unit
+vs. biomass, we see similar relationships here. Total, invasive, and
+fraction biomass increase with PDI and WM PDI values, although total
+biomass is only slightly positive. Native biomass decreases slightly
+with PDI and WM PDI values. Lehmann's lovegrass—the primary invasive
+grass in this dataset—produces more biomass than native grasses, and is
+also more prolific. This likely explains the positive trend in total and
+fraction biomass.
 
 3)  **Statistical analyses:**
 
@@ -361,7 +370,17 @@ summary(npg_model)
 summary(ipg_model)
 summary(fx_model)
 
+library(sjPlot)
+tab_model(totalgrass_model, npg_model, ipg_model, fx_model)
+
 ```
+
+Here we can see that MAP is a highly significant driver of biomass for
+all variables (p \< 0.01). The strength of this relationship varies
+between native and invasive biomass. Total (Adjusted R\^2 = 0.331) and
+invasive (adjusted R\^2 = 0.32) biomass showed strong responses to MAP
+(p\<0.001). In contrast, native biomass is less responsive, as MAP
+explains only 7.5% of variance (adjusted R\^2=0.075).
 
 ii) Fit least square means linear regressions using estimated age, PDI,
     and WM-PDI as the independent variable, and total, native and
@@ -381,6 +400,8 @@ summary(totalgrass_age_model)
 summary(npg_age_model)
 summary(ipg_age_model)
 summary(fx_age_model)
+
+tab_model(totalgrass_age_model, npg_age_model, ipg_age_model, fx_age_model)
 ```
 
 ```{r}
@@ -396,6 +417,7 @@ summary(totalgrass_PDI_model)
 summary(npg_PDI_model)
 summary(ipg_PDI_model)
 summary(fx_PDI_model)
+
 ```
 
 ```{r}
@@ -462,7 +484,7 @@ observed patterns. The discussion of the data should pull examples for
 comparison from the published literature.
 
 ```{r}
-library(sjPlot)
+
 #creates a table of model summaries
 tab_model(mlr_total, mlr_npg, mlr_ipg, mlr_fx)
 
